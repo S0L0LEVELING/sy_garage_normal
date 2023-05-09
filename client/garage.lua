@@ -151,7 +151,7 @@ CreateThread(function()
                                local plate = string.gsub(GetVehicleNumberPlateText(closet), "^%s*(.-)%s*$", "%1")
                                 local model = GetEntityModel(closet)
                                 local name = GetDisplayNameFromVehicleModel(model)
-                                local vehicleProps = lib.getVehicleProperties(closet)
+                                local vehicleProps = ESX.Game.GetVehicleProperties(closet)
 
                                 if Garage.CarKeys then
                                     Garage.DeleteKeyEvent(plate, name)
@@ -202,7 +202,7 @@ CreateThread(function()
                                                 end
                                                 local closet = lib.getClosestVehicle(cache.coords, 2.5, true)
                                                 local vehicle = GetVehiclePedIsIn(cache.ped, false)
-                                                local vehicleProps = lib.getVehicleProperties(vehicle)
+                                                local vehicleProps = ESX.Game.GetVehicleProperties(vehicle)
                                                 local plate = string.gsub(GetVehicleNumberPlateText(closet), "^%s*(.-)%s*$", "%1")
                                                 TriggerServerEvent('sy_garage:GuardarVehiculo', plate, json.encode(vehicleProps), k,VehToNet(closet))
                                             else
@@ -220,7 +220,7 @@ CreateThread(function()
                                                 end
                                                 local closet = lib.getClosestVehicle(cache.coords, 2.5, true)
                                                 local vehicle = GetVehiclePedIsIn(cache.ped, false)
-                                                local vehicleProps = lib.getVehicleProperties(vehicle)
+                                                local vehicleProps = ESX.Game.GetVehicleProperties(vehicle)
                                                 local plate = string.gsub(GetVehicleNumberPlateText(closet), "^%s*(.-)%s*$", "%1")
                                                 TriggerServerEvent('sy_garage:GuardarVehiculo', plate, json.encode(vehicleProps), k,VehToNet(closet))
                                             else
