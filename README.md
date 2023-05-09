@@ -9,7 +9,6 @@
 #
 # <center>**Features**</center>
 * Work with radial menu from ox_lib or ox_target
-* The vehicles persist when a player disconnects, when the vehicle reconnects it will continue in the same place.
 * Share vehicles with colleagues, including a list to manage shared access to the vehicle.
 * Garage for independent work.
 * Generate a key when removing the vehicle from the garage and delete it when returning to the garage.
@@ -30,17 +29,16 @@
 - https://streamable.com/jnj6y6 -- Boat Type
 - https://streamable.com/8xea51 -- Air Type 
 - https://streamable.com/bc4wug -- Mix
-- https://streamable.com/2v6bfl -- Persistent vehicles.
 - https://streamable.com/4mjkzz -- Ox_target
 #
 #
 #  <center>**Commands**</center>
 
 * **/impound** - */impound - With this command, you can impound a vehicle. An NPC will appear and take the nearest vehicle to you. It only works for jobs, and you can add as many jobs as you want in Garage.NpcImpound.*
-* 
+
  ----
 * **/givecar** - *The vehicle you are in will be saved in the database and become your property. (ADMIN)*
-* 
+
 # 
 #
 
@@ -172,14 +170,14 @@ TriggerEvent('sy_garage:NPCImpound')
 
 * To obtain a key for a nearby vehicle with a ProgressBar:
 ```LUA
-exports['sy_garage']:CarKey(time) -- Waiting time of the ProgressBar
--- exports['sy_garage']:CarKey(1000)           1000 = 1s
+exports['sy_garage_normal']:CarKey(time) -- Waiting time of the ProgressBar
+-- exports['sy_garage_normal']:CarKey(1000)           1000 = 1s
 ```
 * To generate a key with a wait time for the player to enter the vehicle and obtain its license plate:
 ```LUA
-exports['sy_garage']:CarKeyBuy(time) --The time can be adjusted as needed and allows waiting for the player who is inside the vehicle.
+exports['sy_garage_normal']:CarKeyBuy(time) --The time can be adjusted as needed and allows waiting for the player who is inside the vehicle.
 
--- exports['sy_garage']:CarKeyBuy(1000)           1000 = 1s
+-- exports['sy_garage_normal']:CarKeyBuy(1000)           1000 = 1s
 ```
 * Create Key event:
 ```LUA
@@ -205,15 +203,15 @@ TriggerServerEvent('sy_carkeys:DeleteKey', count, plate, name)
 ```
 * LockPick:
 ```LUA
-exports['sy_garage']:LockPick()
+exports['sy_garage_normal']:LockPick()
 ```
 * HotWire:
 ```LUA
-exports['sy_garage']:HotWire()
+exports['sy_garage_normal']:HotWire()
 ```
 * Change Plate:
 ```LUA
-exports['sy_garage']:SetMatricula()
+exports['sy_garage_normal']:SetMatricula()
 ```
 #
 #
