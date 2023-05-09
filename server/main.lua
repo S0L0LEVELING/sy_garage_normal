@@ -5,13 +5,13 @@ lib.callback.register('sy_garage:getOwnerVehicles', function(source)
     local xPlayer = ESX.GetPlayerFromId(source)
     local identifier = xPlayer.getIdentifier()
     local vehicles = {}
-    
+
     local results = MySQL.Sync.fetchAll(
         "SELECT * FROM `owned_vehicles` WHERE `owner` = @identifier OR `amigos` LIKE @like_identifier", {
             ['@identifier'] = identifier,
             ['@like_identifier'] = '%' .. identifier .. '%',
         })
-    
+
     if results[1] ~= nil then
         for i = 1, #results do
             local result = results[i]
@@ -26,7 +26,7 @@ lib.callback.register('sy_garage:getOwnerVehicles', function(source)
             veh.duen = result.owner
             veh.amigos = result.amigos
             veh.props = result.vehicle
-            
+
             local isFriend = false
             if amigos ~= nil then
                 for j = 1, #amigos do
@@ -43,12 +43,12 @@ lib.callback.register('sy_garage:getOwnerVehicles', function(source)
             end
         end
     end
-    
+
     local sharedResults = MySQL.Sync.fetchAll(
         "SELECT * FROM `owned_vehicles` WHERE JSON_CONTAINS(`amigos`, @identifier, '$')", {
-            ['@identifier'] = json.encode({identifier = identifier}),
+            ['@identifier'] = json.encode({ identifier = identifier }),
         })
-    
+
     if sharedResults[1] ~= nil then
         for i = 1, #sharedResults do
             local result = sharedResults[i]
@@ -70,9 +70,9 @@ lib.callback.register('sy_garage:getOwnerVehicles', function(source)
             end
         end
     end
-    
-    
-    
+
+
+
     return vehicles
 end)
 
@@ -84,7 +84,7 @@ lib.callback.register('sy_garage:owner_vehicles', function(source)
         for i = 1, #results do
             local result = results[i]
             local veh = json.decode(result.vehicle)
-            
+
             veh.plate = result.plate
             veh.parking = result.parking
             veh.stored = result.stored
@@ -95,12 +95,12 @@ lib.callback.register('sy_garage:owner_vehicles', function(source)
             veh.vehicle = result.vehicle
             veh.lastposition = result.lastposition
             vehicles[#vehicles + 1] = veh
-            
+
             if Garage.Debug then
                 print('Matrícula:', veh.plate, 'Modelo:', veh.model, 'positiom: ', veh.lastposition)
             end
         end
-        
+
         return vehicles
     end
 end)
@@ -129,11 +129,11 @@ RegisterServerEvent('sy_garage:EliminarAmigo', function(Amigo, plate)
                 end
                 if found then
                     local amigosStr = json.encode(amigosTable)
-                    
+
                     if #amigosTable == 0 then
                         amigosStr = nil
                     end
-                    
+
                     MySQL.Async.execute(
                         "UPDATE `owned_vehicles` SET `amigos` = @amigos WHERE `owner` = @identifier AND `plate` = @plate",
                         {
@@ -169,15 +169,15 @@ RegisterServerEvent('sy_garage:CompartirAmigo', function(Amigo, Name, plate)
     local source = source
     local xPlayer = ESX.GetPlayerFromId(source)
     local xIndidentifier = xPlayer.getIdentifier()
-    
+
     local xAmigo = ESX.GetPlayerFromId(Amigo)
     local identifier = xAmigo.getIdentifier()
-    
+
     if identifier == xIndidentifier then
         TriggerClientEvent('sy_garage:Notification', source, locale('noatimismo'))
         return
     end
-    
+
     MySQL.Async.fetchAll(
         "SELECT `amigos` FROM `owned_vehicles` WHERE `owner` = @identifier AND `plate` = @plate", {
             ['@identifier'] = xIndidentifier,
@@ -188,11 +188,11 @@ RegisterServerEvent('sy_garage:CompartirAmigo', function(Amigo, Name, plate)
                 if result[1].amigos ~= nil and result[1].amigos ~= '' then
                     amigosTable = json.decode(result[1].amigos)
                 end
-                local amigoData = {name = Name, identifier = identifier}
+                local amigoData = { name = Name, identifier = identifier }
                 amigosTable[#amigosTable + 1] = amigoData
                 local amigosStr = json.encode(amigosTable)
-                
-                
+
+
                 MySQL.Async.execute(
                     "UPDATE `owned_vehicles` SET `amigos` = @amigos WHERE `owner` = @identifier AND `plate` = @plate",
                     {
@@ -234,7 +234,7 @@ RegisterServerEvent('sy_garage:GuardarVehiculo', function(plate, vehicleData, ga
             stored = 1
         end
         local amigos = json.decode(data.amigos) or {}
-        
+
         if plate == string.gsub(data.plate, "^%s*(.-)%s*$", "%1") then
             if data.owner == xPlayer.identifier then -- propiedad
                 MySQL.Async.execute(
@@ -314,7 +314,7 @@ lib.callback.register('sy_garage:getBankMoney', function(source)
     local xPlayer = ESX.GetPlayerFromId(source)
     local bank = xPlayer.getAccount("bank")
     local money = xPlayer.getMoney()
-    return {bank = bank.money, money = money}
+    return { bank = bank.money, money = money }
 end)
 
 
@@ -330,20 +330,16 @@ RegisterServerEvent('sy_garage:RetirarVehiculo', function(plate, lastparking, po
                 ESX.OneSync.SpawnVehicle(model, pos, hea, props, function(NetworkId)
                     Wait(100)
                     local Vehicle = NetworkGetEntityFromNetworkId(NetworkId)
-                    
+
                     while not DoesEntityExist(Vehicle) do
-                        
                         Wait(0)
-                    
                     end
-                    
+
                     if Garage.SetInToVehicle then
                         TaskWarpPedIntoVehicle(source, Vehicle, -1)
                     end
-                
-                
                 end)
-                
+
                 TriggerClientEvent('sy_garage:Notification', source, locale('SERVER_retirar'))
             else
                 TriggerClientEvent('sy_garage:Notification', source, locale('SERVER_ErrorRetirar'))
@@ -373,18 +369,14 @@ RegisterServerEvent('sy_garage:RetirarVehiculoImpound', function(plate, money, p
                         ESX.OneSync.SpawnVehicle(model, pos, hea, props, function(NetworkId)
                             Wait(100)
                             local Vehicle = NetworkGetEntityFromNetworkId(NetworkId)
-                            
+
                             while not DoesEntityExist(Vehicle) do
-                                
                                 Wait(0)
-                            
                             end
-                            
+
                             if Garage.SetInToVehicle then
                                 TaskWarpPedIntoVehicle(source, Vehicle, -1)
                             end
-                        
-                        
                         end)
                         xPlayer.removeAccountMoney("money", price)
                         TriggerClientEvent('sy_garage:Notification', source,
@@ -412,17 +404,14 @@ RegisterServerEvent('sy_garage:RetirarVehiculoImpound', function(plate, money, p
                         ESX.OneSync.SpawnVehicle(model, pos, hea, props, function(NetworkId)
                             Wait(100)
                             local Vehicle = NetworkGetEntityFromNetworkId(NetworkId)
-                            
+
                             while not DoesEntityExist(Vehicle) do
-                                
                                 Wait(0)
-                            
                             end
-                            
+
                             if Garage.SetInToVehicle then
                                 TaskWarpPedIntoVehicle(source, Vehicle, -1)
                             end
-                        
                         end)
                         xPlayer.removeAccountMoney("bank", price)
                         TriggerClientEvent('sy_garage:Notification', source,
@@ -454,7 +443,7 @@ RegisterServerEvent('sy_garage:MandarVehiculoImpound', function(plate, impo)
     local source = source
     local xPlayer = ESX.GetPlayerFromId(source)
     local identifier = xPlayer.getIdentifier()
-    
+
     MySQL.Async.execute(
         "UPDATE `owned_vehicles` SET `parking` = @impo, `pound` = 1 WHERE `owner` = @identifier AND `plate` = @plate",
         {
@@ -474,11 +463,11 @@ end)
 RegisterServerEvent('sy_garage:AgregarKilometros', function(vehPlate, km)
     local plate = vehPlate
     local newKM = km
-    
-    MySQL.Async.fetchScalar('SELECT plate FROM owned_vehicles WHERE plate = @plate', {['@plate'] = plate},
+
+    MySQL.Async.fetchScalar('SELECT plate FROM owned_vehicles WHERE plate = @plate', { ['@plate'] = plate },
         function(result)
             MySQL.Async.execute('UPDATE owned_vehicles SET mileage = @kms WHERE plate = @plate',
-                {['@plate'] = plate, ['@kms'] = newKM})
+                { ['@plate'] = plate, ['@kms'] = newKM })
         end)
 end)
 
@@ -506,9 +495,8 @@ RegisterNetEvent('sy_garage:SetCarDB', function(vehicleData, plate)
         local plate = plate
         local results = MySQL.Sync.fetchAll(
             "SELECT * FROM owned_vehicles WHERE plate = @plate",
-            {['@plate'] = plate})
+            { ['@plate'] = plate })
         if results[1] ~= nil then
-
             TriggerClientEvent('sy_garage:Notification', source,
                 'El vehículo con placa ' .. plate .. ' ya está en propiedad.')
 
@@ -526,7 +514,8 @@ RegisterNetEvent('sy_garage:SetCarDB', function(vehicleData, plate)
                     ['@vehicle'] = jsonVehicleData,
                     ['@calle'] = nil,
                 })
-            TriggerClientEvent('sy_garage:Notification', source, 'El vehículo con placa '..plate ..', ahora es de tu propiedad')
+            TriggerClientEvent('sy_garage:Notification', source,
+                'El vehículo con placa ' .. plate .. ', ahora es de tu propiedad')
 
             if Garage.Debug then
                 print('El vehículo con placa ' ..
@@ -535,7 +524,8 @@ RegisterNetEvent('sy_garage:SetCarDB', function(vehicleData, plate)
         end
     else
         if Garage.Debug then
-            print('El jugador '..xPlayer.getName()..' no tiene permisos suficientes para agregar vehículos a las propiedades.')
+            print('El jugador ' ..
+            xPlayer.getName() .. ' no tiene permisos suficientes para agregar vehículos a las propiedades.')
         end
     end
 end)
@@ -551,7 +541,7 @@ if Garage.AutoImpound.AutoImpound then
                 local allVehicles = GetAllVehicles()
                 local vehicleFound = false
                 local xPlayer = ESX.GetPlayerFromIdentifier(data.owner)
-                
+
                 for j = 1, #allVehicles do
                     local vehicle = allVehicles[j]
                     if DoesEntityExist(vehicle) then
@@ -575,7 +565,7 @@ if Garage.AutoImpound.AutoImpound then
                 end
                 if not vehicleFound and data.stored == 0 then
                     MySQL.Async.execute(
-                        "UPDATE `owned_vehicles` SET `parking` = @impo `pound` = 1 WHERE  `plate` = @plate",
+                        "UPDATE `owned_vehicles` SET `parking` = @impo, `pound` = 1 WHERE  `plate` = @plate",
                         {
                             ['@plate'] = data.plate,
                             ['@impo'] = Garage.AutoImpound.ImpoundIn,

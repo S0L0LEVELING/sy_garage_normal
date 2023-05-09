@@ -89,15 +89,9 @@ function CrearBlips()
     end
 end
 
+
 CreateThread(function()
-    if (GetCurrentResourceName() ~= 'sy_garage_normal') then
-        return
-    end
     CrearBlips()
-end)
-
-
-CreateThread(function()
     for k, v in pairs(Garage.Garages) do
         if not v.impound then
             if Garage.Target then
