@@ -1,6 +1,6 @@
 if Garage.Version then
   local function GitHubUpdate()
-    PerformHttpRequest('https://raw.githubusercontent.com/Mono-94/sy_garage/main/fxmanifest.lua',
+    PerformHttpRequest('https://raw.githubusercontent.com/Mono-94/sy_garage_normal/main/fxmanifest.lua',
       function(error, result, headers)
         local actual = GetResourceMetadata(GetCurrentResourceName(), 'version')
 
