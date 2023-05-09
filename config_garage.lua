@@ -38,9 +38,9 @@ Garage.SharedGarage = false      -- If it is "true" it will be able to withdraw 
 
 Garage.ShareCarFriend = true -- Share vehicles with friends.
 
-Garage.SaveKilometers = true -- Save Kilometers in DB
+Garage.SaveKilometers = false -- Save Kilometers in DB
 
-Garage.SetInToVehicle = true -- Set ped into vehicle upon spawn.
+Garage.SetInToVehicle = false -- Set ped into vehicle upon spawn.
 
 --<-------------------------------------->--
 
