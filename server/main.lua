@@ -238,14 +238,14 @@ RegisterServerEvent('sy_garage:GuardarVehiculo', function(plate, vehicleData, ga
         if plate == string.gsub(data.plate, "^%s*(.-)%s*$", "%1") then
             if data.owner == xPlayer.identifier then -- propiedad
                 MySQL.Async.execute(
-                    "UPDATE `owned_vehicles` SET `vehicle` = @vehicleData, `stored` = @stored,`pound` = @pound, `calle` = @calle, `parking` = @parking WHERE `owner` = @identifier AND `plate` = @plate",
+                    "UPDATE `owned_vehicles` SET `vehicle` = @vehicleData, `stored` = @stored,`pound` = @pound, `parking` = @parking WHERE `owner` = @identifier AND `plate` = @plate",
                     {
                         ['@identifier'] = identifier,
                         ['@vehicleData'] = vehicleDataEncoded,
                         ['@plate'] = plate, --string.gsub(plate, "^%s*(.-)%s*$", "%1")
                         ['@stored'] = stored,
                         ['@parking'] = parking,
-                        ['@calle'] = nil,
+                       
                         ['@pound'] = nil
                     },
                     function(rowsChanged)
@@ -269,13 +269,13 @@ RegisterServerEvent('sy_garage:GuardarVehiculo', function(plate, vehicleData, ga
                     local amigo = amigos[j]
                     if amigo.identifier == xPlayer.identifier then -- de un amigo.
                         MySQL.Async.execute(
-                            "UPDATE `owned_vehicles` SET `vehicle` = @vehicleData, `stored` = @stored, `pound` = @pound, `calle` = @calle,  `parking` = @parking WHERE  `plate` = @plate",
+                            "UPDATE `owned_vehicles` SET `vehicle` = @vehicleData, `stored` = @stored, `pound` = @pound,  `parking` = @parking WHERE  `plate` = @plate",
                             {
                                 ['@vehicleData'] = vehicleDataEncoded,
                                 ['@plate'] = plate, --string.gsub(plate, "^%s*(.-)%s*$", "%1")
                                 ['@stored'] = stored,
                                 ['@parking'] = parking,
-                                ['@calle'] = nil,
+                               
                                 ['@pound'] = nil
                             },
                             function(rowsChanged)
@@ -358,12 +358,12 @@ RegisterServerEvent('sy_garage:RetirarVehiculoImpound', function(plate, money, p
     if money == 'money' then
         if xPlayer.getMoney() >= price then
             MySQL.Async.execute(
-                "UPDATE `owned_vehicles` SET `pound` = NULL, `parking` = (SELECT `lastparking` FROM `owned_vehicles` WHERE `owner` = @identifier AND `plate` = @plate), `calle` = @calle WHERE `owner` = @identifier AND `plate` = @plate"
+                "UPDATE `owned_vehicles` SET `pound` = NULL, `parking` = (SELECT `lastparking` FROM `owned_vehicles` WHERE `owner` = @identifier AND `plate` = @plate),  WHERE `owner` = @identifier AND `plate` = @plate"
                 ,
                 {
                     ['@identifier'] = identifier,
                     ['@plate'] = plate,
-                    ['@calle'] = 1
+                    
                 }, function(rowsChanged)
                     if rowsChanged > 0 then
                         ESX.OneSync.SpawnVehicle(model, pos, hea, props, function(NetworkId)
@@ -393,12 +393,12 @@ RegisterServerEvent('sy_garage:RetirarVehiculoImpound', function(plate, money, p
     elseif money == 'bank' then
         if bank.money >= price then
             MySQL.Async.execute(
-                "UPDATE `owned_vehicles` SET `pound` = NULL, `parking` = (SELECT `lastparking` FROM `owned_vehicles` WHERE `owner` = @identifier AND `plate` = @plate), `calle` = @calle WHERE `owner` = @identifier AND `plate` = @plate"
+                "UPDATE `owned_vehicles` SET `pound` = NULL, `parking` = (SELECT `lastparking` FROM `owned_vehicles` WHERE `owner` = @identifier AND `plate` = @plate),  WHERE `owner` = @identifier AND `plate` = @plate"
                 ,
                 {
                     ['@identifier'] = identifier,
                     ['@plate'] = plate,
-                    ['@calle'] = 1
+                    
                 }, function(rowsChanged)
                     if rowsChanged > 0 then
                         ESX.OneSync.SpawnVehicle(model, pos, hea, props, function(NetworkId)
@@ -507,12 +507,12 @@ RegisterNetEvent('sy_garage:SetCarDB', function(vehicleData, plate)
             vehicleData.plate = plate
             local jsonVehicleData = json.encode(vehicleData)
             MySQL.Sync.execute(
-                "INSERT INTO owned_vehicles (owner, plate, vehicle, calle) VALUES (@owner, @plate, @vehicle, @calle)",
+                "INSERT INTO owned_vehicles (owner, plate, vehicle) VALUES (@owner, @plate, @vehicle)",
                 {
                     ['@owner'] = xPlayer.identifier,
                     ['@plate'] = plate,
                     ['@vehicle'] = jsonVehicleData,
-                    ['@calle'] = nil,
+                   
                 })
             TriggerClientEvent('sy_garage:Notification', source,
                 'El vehículo con placa ' .. plate .. ', ahora es de tu propiedad')

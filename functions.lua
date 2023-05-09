@@ -1,5 +1,4 @@
 
-
 Sy = {}
 
 Sy.GetProps = function()

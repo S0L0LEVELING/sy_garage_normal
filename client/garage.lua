@@ -337,7 +337,7 @@ AddEventHandler('sy_garage:garage', function(data)
         local plate = data.plate
         if Garage.SharedGarage then
             vehiclesFound = true
-            if data.stored == 0 or data.calle == '1' then
+            if data.stored == 0  then
                 data.parking = locale('VehEnLaCalle')
                 color = '#FF8787'
             end
@@ -394,7 +394,8 @@ AddEventHandler('sy_garage:garage', function(data)
                     model = data.model,
                     pound = data.pound,
                     stored = data.stored,
-                    calle = data.calle,
+                    
+                    
                     impo = impo,
                     duen = data.duen,
                     id = data.id,
@@ -405,7 +406,7 @@ AddEventHandler('sy_garage:garage', function(data)
         else
             if data.parking == garageName then
                 vehiclesFound = true
-                if data.parking == garageName and data.stored == 0 or data.calle == '1' then
+                if data.parking == garageName and data.stored == 0  then
                     data.parking = locale('VehEnLaCalle')
                     color = '#FF8787'
                 end
@@ -461,7 +462,6 @@ AddEventHandler('sy_garage:garage', function(data)
                         model = data.model,
                         pound = data.pound,
                         stored = data.stored,
-                        calle = data.calle,
                         impo = impo,
                         duen = data.duen,
                         id = data.id,
@@ -498,7 +498,7 @@ end)
 
 AddEventHandler('sy_garage:VehiculoSeleccionado', function(data)
     local select = {}
-    if data.stored == 1  and data.calle == nil then
+    if data.stored == 1   then
         table.insert(select, {
             title = locale('SacarVehiculooo'),
             icon = 'car-side',
