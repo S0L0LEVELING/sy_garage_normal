@@ -6,7 +6,7 @@ name 'Sy_Garage'
 
 repository 	'https://github.com/Mono-94/sy_garage'
 
-version 		'1.0.3'
+version 		'1.0.4'
 
 author 'Symbiote#3027'
 
